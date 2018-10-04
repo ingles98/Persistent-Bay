@@ -292,7 +292,7 @@ var/global/list/debug_data = list()
 			lis |= T
 	to_file(f,lis)
 
-/proc/Save_World()
+/proc/Save_World( to_sql ) // to_sql : WIP SAVE TO SQL. WISH ME LUCK
 	to_world("<font size=4 color='green'>The world is saving! You won't be able to join at this time.</font>")
 	config.enter_allowed = 0
 	Prepare_Atmos_For_Saving()

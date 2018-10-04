@@ -2445,6 +2445,7 @@
 #include "code\modules\wireless\devices.dm"
 #include "code\modules\wireless\interfaces.dm"
 #include "code\modules\world_save\map_storage.dm"
+#include "code\modules\world_save\persisbase.dm"
 #include "code\modules\xenoarcheaology\anomaly_container.dm"
 #include "code\modules\xenoarcheaology\boulder.dm"
 #include "code\modules\xenoarcheaology\effect.dm"
