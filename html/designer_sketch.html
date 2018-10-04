@@ -358,6 +358,7 @@ function getPixel(x, y, r, g, b, a){
 	var pixel = pixel_map[x][y]
 	pixel.style.backgroundColor = rgb(r,g,b);
 	pixel.style.opacity = a/255;
+	alert(x + ", " + y)
 }
 
 function getPixels(list){

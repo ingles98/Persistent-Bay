@@ -35,6 +35,83 @@
 	if (ckey)
 		designer_creator_ckey = ckey
 
+/////////////////////////////////////////////////////
+/obj/item/weapon/paper_sketch
+	name = "\improper sketch"
+	desc = "\"Do I have to draw you a picture ?\""
+	gender = NEUTER
+	icon = 'icons/obj/bureaucracy.dmi'
+	icon_state = "paper"
+	var/icon/icon_custom
+	var/list/pixel_list
+	var/datum/designer/design
+
+	var/icon/sketch //The sketch goes into this var
+	var/sketch_width
+	var/sketch_height
+
+/obj/item/weapon/paper_sketch/New()
+	if (!sketch) sketch = icon("icons/64x64.dmi", "def") //blank sketch
+	sketch_width = sketch.Width()
+	sketch_height = sketch.Height()
+	design = new(source = src)
+
+/obj/item/weapon/paper_sketch/attack_self(mob/living/user as mob)
+	user.examinate(src)
+
+/obj/item/weapon/paper_sketch/attackby(obj/item/weapon/P as obj, mob/user as mob)
+	if (istype(P, /obj/item/weapon/pen))
+		design.pixel_width = sketch_width
+		design.pixel_height = sketch_height
+		design.Design()
+
+/obj/item/weapon/paper_sketch/GetDesign(var/icon/ico, ckey)
+	if (!ico || !istype(ico) )
+		return
+	sketch = ico
+
+	if (ckey)
+		designer_creator_ckey = ckey
+
+/obj/item/weapon/paper_sketch/examine(mob/user)
+	. = ..()
+	if(name != initial(name) )
+		to_chat(user, "It's titled '[name]'.")
+
+	if(in_range(user, src) || isghost(user))
+		show_content(usr)
+	else
+		to_chat(user, "<span class='notice'>You have to go closer if you want to read it.</span>")
+
+/obj/item/weapon/paper_sketch/proc/show_content(mob/user, forceshow)
+	if (!sketch)
+		to_chat(user, "Error. paper_sketch bug, contact a dev plz...")
+		return
+	var/can_read = (istype(user, /mob/living/carbon/human) || isghost(user) || istype(user, /mob/living/silicon)) || forceshow
+	usr << browse(file("html/designer_sketch.html"), "window=[name];size=[sketch_width +20]x[sketch_height +20];can_close=1" )
+	usr << output("href='?src=\ref[src];[sketch_width];[sketch_width]","[name].browser:getData")
+	for (var/x = 1, x <= sketch_width, x++)
+		for (var/y = 1, y <= sketch_height, y++)
+			var/list/color_array = ReadRGB(sketch.GetPixel(x,y))
+			if (!color_array || !color_array.len)
+				color_array = new/list()
+				color_array.len = 4
+				color_array[1] = 0
+				color_array[2] = 0
+				color_array[3] = 0
+				color_array[4] = 0
+			if (color_array.len < 4)
+				color_array.len = 4
+				color_array[4] = 255
+			if (!can_read && prob(75))
+				color_array[ rand(1, 4) ] = rand(1,255)
+			if (!can_read && prob(30))
+				color_array = new/list(0,0,0,0)
+			usr << output("[x];[y];[color_array[1]];[color_array[2]];[color_array[3]];[color_array[4]]","[name].browser:getPixel")
+
+
+/////////////////////////////////////////////////////
+
 /datum/designer
 	var/pixel_width = 8
 	var/pixel_height = 8
