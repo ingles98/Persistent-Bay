@@ -244,6 +244,7 @@ var selectedAlpha = 1;
 var source = ""
 var isProcessing = false;
 
+
 var max_x = 0
 var max_y = 0
 
@@ -332,7 +333,6 @@ function startProcess(pixels, index ,isBegin) {
 
 	var str = ";action=pixel;x="+elem.px+";"+"y="+elem.py+";"+"r="+args[1]+";"+"g="+args[2]+";"+"b="+args[3]+";"+"a="+args[4];
 	location.href = source + str;
-
 	if (index % 2 == 0) {
 		startProcess(pixels, index+1)
 	} else {
@@ -353,6 +353,7 @@ function getData(ref,p_width,p_height){
 	if (remake) {
 		main()
 	}
+
 }
 function getPixel(x, y, r, g, b, a){
 	var pixel = pixel_map[x][y]

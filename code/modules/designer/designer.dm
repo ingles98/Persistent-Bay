@@ -35,6 +35,7 @@
 	if (ckey)
 		designer_creator_ckey = ckey
 
+
 /////////////////////////////////////////////////////
 /obj/item/weapon/paper_sketch
 	name = "\improper sketch"
@@ -109,8 +110,7 @@
 				color_array = new/list(0,0,0,0)
 			usr << output("[x];[y];[color_array[1]];[color_array[2]];[color_array[3]];[color_array[4]]","[name].browser:getPixel")
 
-
-/////////////////////////////////////////////////////
+/////////////////////////////////////////////////
 
 /datum/designer
 	var/pixel_width = 8

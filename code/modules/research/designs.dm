@@ -2046,6 +2046,27 @@ CIRCUITS BELOW
 	build_path = /obj/item/weapon/circuitboard/machinery/cell_charger
 	sort_string = "WAAAT"
 
+/datum/design/circuit/recharger
+	name = "recharger"
+	id = "recharger"
+	req_tech = list(TECH_DATA = 3, TECH_ENGINEERING = 3)
+	build_path = /obj/item/weapon/circuitboard/machinery/recharger
+	sort_string = "WAAAT"
+
+/datum/design/circuit/suit_storage_unit
+	name = "Suit Storage Unit"
+	id = "suit_storage_unit"
+	req_tech = list(TECH_ENGINEERING = 1)
+	build_path = /obj/item/weapon/circuitboard/suit_storage_unit
+	sort_string = "WAATT"
+
+/datum/design/circuit/suit_cycler
+	name = "Suit Cycler"
+	id = "suit_cycler"
+	req_tech = list(TECH_ENGINEERING = 1)
+	build_path = /obj/item/weapon/circuitboard/suit_cycler
+	sort_string = "WAATT"
+
 /datum/design/aimodule
 	build_type = IMPRINTER
 	materials = list("glass" = 2000, "gold" = 100)
