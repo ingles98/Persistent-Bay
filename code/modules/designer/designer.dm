@@ -55,6 +55,7 @@
 	if (!sketch) sketch = icon("icons/64x64.dmi", "def") //blank sketch
 	sketch_width = sketch.Width()
 	sketch_height = sketch.Height()
+	message_admins("SKETCH CREATION: [sketch_width], [sketch_height]")
 	design = new(source = src)
 
 /obj/item/weapon/paper_sketch/attack_self(mob/living/user as mob)
@@ -68,6 +69,8 @@
 
 /obj/item/weapon/paper_sketch/GetDesign(var/icon/ico, ckey)
 	if (!ico || !istype(ico) )
+		message_admins("SKETCH: [ico] is not an icon. Ckey: [ckey]")
+		qdel(ico)
 		return
 	sketch = ico
 
@@ -85,22 +88,25 @@
 		to_chat(user, "<span class='notice'>You have to go closer if you want to read it.</span>")
 
 /obj/item/weapon/paper_sketch/proc/show_content(mob/user, forceshow)
+	set background = 1
 	if (!sketch)
-		to_chat(user, "Error. paper_sketch bug, contact a dev plz...")
+		message_admins("Error. paper_sketch bug, contact a dev plz...")
 		return
 	var/can_read = (istype(user, /mob/living/carbon/human) || isghost(user) || istype(user, /mob/living/silicon)) || forceshow
-	usr << browse(file("html/designer_sketch.html"), "window=[name];size=[sketch_width +20]x[sketch_height +20];can_close=1" )
-	usr << output("href='?src=\ref[src];[sketch_width];[sketch_width]","[name].browser:getData")
+	usr << browse(file("html/designer_sketch.html"), "window=sketch;size=[sketch_width*3 +20]x[sketch_height*3 +20];can_close=1" )
+	usr << output("href='?src=\ref[src];[sketch_width];[sketch_width]","sketch.browser:getData")
+	var/sketch_data = "alert(\"WORKED\");"
 	for (var/x = 1, x <= sketch_width, x++)
 		for (var/y = 1, y <= sketch_height, y++)
 			var/list/color_array = ReadRGB(sketch.GetPixel(x,y))
 			if (!color_array || !color_array.len)
+				//message_admins("SKETCH: No color array ([sketch.GetPixel(x,y)])")
 				color_array = new/list()
 				color_array.len = 4
-				color_array[1] = 0
+				color_array[1] = 255
 				color_array[2] = 0
-				color_array[3] = 0
-				color_array[4] = 0
+				color_array[3] = 255
+				color_array[4] = 255
 			if (color_array.len < 4)
 				color_array.len = 4
 				color_array[4] = 255
@@ -108,7 +114,15 @@
 				color_array[ rand(1, 4) ] = rand(1,255)
 			if (!can_read && prob(30))
 				color_array = new/list(0,0,0,0)
-			usr << output("[x];[y];[color_array[1]];[color_array[2]];[color_array[3]];[color_array[4]]","[name].browser:getPixel")
+			//usr << output("[x];[y];[color_array[1]];[color_array[2]];[color_array[3]];[color_array[4]]","sketch.browser:getPixel")
+			sketch_data += "pixel_map\[[x]\]\[[y]\].style.backgroundColor = rgb([color_array[1]],[color_array[2]],[color_array[3]]);"
+			sketch_data += "pixel_map\[[x]\]\[[y]\].style.opacity = [color_array[4]]/255;"
+
+	//text2file(sketch_data,sketch_file)
+	//text2file(sketch_data,"DESIGNER_CACHE/sketch_data.js")
+	//usr << browse_rsc("DESIGNER_CACHE/sketch_data.js")
+	usr << output("[sketch_data]","sketch.browser:getImageData")
+
 
 /////////////////////////////////////////////////
 
