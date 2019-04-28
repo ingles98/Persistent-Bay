@@ -190,7 +190,7 @@
 			if (health > 0)
 				M.visible_message("<span class='notice'>[M] [response_help] \the [src]</span>")
 				if (pet_controller)
-					pet_controller.onFriendlyTouch(M)
+					pet_controller.onFriendlyAct(M)
 
 		if(I_DISARM)
 			M.visible_message("<span class='notice'>[M] [response_disarm] \the [src]</span>")
@@ -201,6 +201,8 @@
 			adjustBruteLoss(harm_intent_damage)
 			M.visible_message("<span class='warning'>[M] [response_harm] \the [src]</span>")
 			M.do_attack_animation(src)
+			if (pet_controller)
+				pet_controller.onHostileAct(M, harm_intent_damage)
 
 	return
 
@@ -247,6 +249,9 @@
 		damage *= 2
 		purge = 3
 	adjustBruteLoss(damage)
+
+	if (pet_controller)
+		pet_controller.onHostileAct(user, damage)
 
 	return 0
 
