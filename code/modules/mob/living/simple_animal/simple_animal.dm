@@ -95,6 +95,9 @@
 	handle_paralysed()
 	handle_supernatural()
 
+	if (pet_controller)
+		pet_controller.update()
+
 	//Movement
 	if(!client && !stop_automated_movement && wander && !anchored)
 		if(isturf(src.loc) && !resting)		//This is so it only moves if it's not inside a closet, gentics machine, etc.
@@ -186,6 +189,8 @@
 		if(I_HELP)
 			if (health > 0)
 				M.visible_message("<span class='notice'>[M] [response_help] \the [src]</span>")
+				if (pet_controller)
+					pet_controller.onFriendlyTouch(M)
 
 		if(I_DISARM)
 			M.visible_message("<span class='notice'>[M] [response_disarm] \the [src]</span>")
