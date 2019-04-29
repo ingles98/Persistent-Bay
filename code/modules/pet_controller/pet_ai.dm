@@ -14,6 +14,11 @@
 	var/max_owners = 1
 	var/list/owners = new()
 
+	var/highest_affinity_record = 0
+
+	//How much in percentage of the current highest affinity record to consider to prevent characters to go lower than that once they reached it, when passive affinity loss.
+	var/highest_affinity_loss_multiplier = 0.5
+
 	var/mob/living/simple_animal/my_mob
 
 	var/passive_affinity_range = 4
@@ -52,6 +57,8 @@
 		affinity[name] = delta
 		return
 	affinity[name] = affinity[name] + delta
+	if (affinity[name] > highest_affinity_record)
+		highest_affinity_record = affinity[name]
 
 /datum/pet_controller/proc/handle_nearbyAffinity()
 	for(var/mob/living/carbon/human/A in view(passive_affinity_range, src.my_mob) )
@@ -60,6 +67,14 @@
 
 /datum/pet_controller/proc/handle_gradualAffinityLoss()
 	for(var/name in src.affinity)
+		//Prevent pets getting enemies with strangers they have only seen once heh
+		if (src.affinity[name] -passive_affinity_loss < 0)
+			src.affinity[name] = 0
+			continue
+		//Prevent pets from forgetting altogether those he once loved greatly just because they have been absent in a long time
+		if (src.affinity[name] >= src.highest_affinity_record*highest_affinity_loss_multiplier && src.affinity[name] -passive_affinity_loss < src.highest_affinity_record*highest_affinity_loss_multiplier)
+			src.affinity[name] = src.highest_affinity_record*highest_affinity_loss_multiplier
+			continue
 		incrementAffinity(name, -passive_affinity_loss)
 	
 /datum/pet_controller/proc/updateOwnership()
