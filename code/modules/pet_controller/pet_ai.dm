@@ -29,6 +29,9 @@
 	var/hostile_active_affinity_loss = 50
 	var/hostile_active_affinity_loss_bonusMultiplier = 5	  //"bonus" is equal to the damage dealt to the mob in this context
 
+	var/updateOwnership_onCooldown = FALSE
+	var/updateOwnership_cooldown = 60 SECONDS
+
 /datum/pet_controller/New(var/mob/living/simple_animal/my_mob)
 	if (! istype(my_mob) )
 		qdel(src)
@@ -68,7 +71,6 @@
 		return FALSE
 	var/list/affinity = src.affinity.Copy()
 	for (var/x = 1, x <= max, x++)
-		message_admins("iter > [x] max: [max]")
 		var/list/highest_affinity_owner = getHighestAffinity(affinity)
 		if (!highest_affinity_owner["name"])
 			return FALSE
@@ -92,10 +94,16 @@
 
 /datum/pet_controller/proc/update()
 	age++
+
 	if (!passive_affinity_onCooldown)
 		passive_affinity_onCooldown = TRUE
 		spawn(passive_affinity_cooldown)
 			passive_affinity_onCooldown = FALSE
 		handle_nearbyAffinity()
 		handle_gradualAffinityLoss()
-	updateOwnership()
+
+	if (!updateOwnership_onCooldown)
+		updateOwnership_onCooldown = TRUE
+		spawn(updateOwnership_cooldown)
+			updateOwnership_onCooldown = FALSE
+		updateOwnership()
